@@ -15,6 +15,7 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   // Sizning boshqa konfiguratsiyalaringiz...
   reactStrictMode: true,
+  
 };
 
 export default withPWA(nextConfig);
