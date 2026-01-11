@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📒 Qarz Daftari – Smart Debt Management Platform
 
-## Getting Started
+Qarz Daftari — kichik bizneslar, do‘konlar va yakka tadbirkorlar uchun mo‘ljallangan **raqamli qarz nazorati tizimi**.  
+U orqali mijozlar qarzlari, to‘lovlar, do‘konlar va papkalar (folderlar) bitta markaziy panelda boshqariladi.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Loyihaning maqsadi
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O‘zbekistonda ko‘plab savdo nuqtalari qarzlarni hali ham daftar yoki Telegram orqali yuritadi.  
+Bu esa:
+- qarz yo‘qolishiga
+- hisob-kitob chalkashishiga
+- pul oqimi nazoratdan chiqishiga
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+olib keladi.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Qarz Daftari** bu muammolarni **raqamli, tez va xavfsiz** tarzda hal qiladi.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧩 Asosiy imkoniyatlar
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+✔️ Mijozlarni ro‘yxatdan o‘tkazish  
+✔️ Har bir mijoz uchun qarz tarixi  
+✔️ Qarz qo‘shish va kamaytirish  
+✔️ To‘lovlarni qayd qilish  
+✔️ Papkalar (Folder) orqali tartiblash  
+✔️ Do‘konlar (Shop) bo‘yicha ajratish  
+✔️ Statistikalar  
+✔️ Real-time yangilanish  
+✔️ Login / Auth tizimi  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧠 Platforma arxitekturasi
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Loyiha **modular context-based** struktura asosida qurilgan:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `AuthContext` → foydalanuvchi autentifikatsiyasi  
+- `ShopContext` → do‘konlar boshqaruvi  
+- `FolderContext` → mijozlar papkalari  
+- `Debt / Client Context` → qarzlar va to‘lovlar  
+
+Bu arxitektura:
+- kodni toza qiladi  
+- xatolarni kamaytiradi  
+- kelajakda mobil ilova va API bilan oson integratsiya beradi  
+
+---
+
+## 🛠 Texnologiyalar
+
+- **Next.js (App Router)**
+- **React + Context API**
+- **TypeScript**
+- **Tailwind CSS**
+- **Supabase (Auth + Database + Realtime)**
+- **Vercel Deploy-ready**
+
+---
+
+## 📁 Papkalar tuzilishi
