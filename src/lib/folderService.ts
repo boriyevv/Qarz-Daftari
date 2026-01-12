@@ -1,8 +1,9 @@
-import { supabase } from "./supabaseClient";
+import { createClient } from "./supabaseClient";
 import { Folder } from "@/types/folder";
 
 
 export async function getFolders(shopId: string): Promise<Folder[]> {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from("folders")
     .select("*")
@@ -24,6 +25,7 @@ export async function createFolder(
   shopId: string,
   name: string
 ): Promise<void> {
+  const supabase = createClient()
   const { data: last } = await supabase
     .from("folders")
     .select("sort_order")
@@ -48,6 +50,7 @@ export async function updateFolderOrder(
   folderId: string,
   order: number
 ): Promise<void> {
+  const supabase = createClient()
   const { error } = await supabase
     .from("folders")
     .update({ sort_order: order })
@@ -60,6 +63,7 @@ export async function renameFolder(
   folderId: string,
   name: string
 ): Promise<void> {
+  const supabase = createClient()
   const { error } = await supabase
     .from("folders")
     .update({ name })
@@ -72,6 +76,9 @@ export async function deleteFolderAndMigrateDebts(
   folder: Folder,
   defaultFolderId: string
 ): Promise<void> {
+
+  const supabase = createClient()
+
   if (folder.isDefault) {
     throw new Error("Default folderni o‘chirish mumkin emas");
   }

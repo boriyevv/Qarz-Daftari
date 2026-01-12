@@ -14,6 +14,7 @@ import { EditDebtModal } from "@/components/EditDebtModal";
 import { Debt } from "@/types/debt";
 import { MobileFolderTabs } from "@/components/MobileFolderTabs";
 import { FolderDndProvider } from "@/components/FolderDndProvider";
+import { ShopHeader } from "@/components/ShopHeader";
 
 
 
@@ -58,6 +59,7 @@ function DashboardContent() {
   return (
     <FolderDndProvider>
       <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-gray-50 p-4 md:p-6">
+        
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Qarzlar</h1>
@@ -157,6 +159,7 @@ export default function DashboardPage() {
           {/* Main area */}
           <div className="flex-1 flex flex-col">
             {/* Mobile folder tabs */}
+            <ShopHeader/>
             <MobileFolderTabs />
 
             {/* Content (debts) */}

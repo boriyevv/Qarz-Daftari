@@ -1,105 +1,75 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createClient } from "@/lib/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
-import { Shop, ShopPlan } from "@/types/shop";
-import { PLAN_LIMITS } from "@/lib/planLimits";
-import { getDebtCount } from "@/lib/debtService";
+import { Shop } from "@/types/shop";
 
 type ShopContextType = {
   shop: Shop | null;
   loading: boolean;
-  debtCount: number;
-  canAddDebt: boolean;
+  error: string | null;
   refreshShop: () => Promise<void>;
 };
 
-const ShopContext = createContext<ShopContextType | undefined>(undefined);
+const ShopContext = createContext<ShopContextType | null>(null);
 
-export function ShopProvider({ children }: { children: ReactNode }) {
+export function ShopProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-
   const [shop, setShop] = useState<Shop | null>(null);
   const [loading, setLoading] = useState(true);
-  const [debtCount, setDebtCount] = useState(0);
-  const [canAddDebt, setCanAddDebt] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchShop = async () => {
-    // 👇 MUHIM: har doim loading true’dan boshlanadi
-    setLoading(true);
-
-    // USER YO‘Q bo‘lsa — loadingni o‘chirib chiqib ketamiz
+  const fetchShop = useCallback(async () => {
     if (!user) {
       setShop(null);
-      setDebtCount(0);
-      setCanAddDebt(true);
       setLoading(false);
+      setError(null);
       return;
     }
 
-    const { data, error } = await supabase
-      .from("shops")
-      .select("*")
-      .eq("owner_id", user.id)
-      .single();
+    setLoading(true);
+    setError(null);
 
-    // SHOP YO‘Q (create-shop ga ketadi)
-    if (error && error.code === "PGRST116") {
+    try {
+      const supabase = createClient();
+
+      // 1. user → shop mapping
+      const { data: mapping, error: mapErr } = await supabase
+        .from("shop_users")
+        .select("shop_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (mapErr) throw new Error("Shop mapping topilmadi");
+      if (!mapping) throw new Error("Siz hech qanday do'konga ulanmagansiz");
+
+      // 2. shop data
+      const { data: shopData, error: shopErr } = await supabase
+        .from("shops")
+        .select("id, name, plan, trial_until, paid_until, grace_until, force_active")
+        .eq("id", mapping.shop_id)
+        .single();
+
+      if (shopErr) throw new Error("Shop ma'lumotlari yuklanmadi");
+      if (!shopData) throw new Error("Shop topilmadi");
+
+      setShop(shopData as Shop);
+    } catch (err) {
+      console.error("Shop fetch error:", err);
+      setError(err instanceof Error ? err.message : "Noma'lum xatolik");
       setShop(null);
-      setDebtCount(0);
-      setCanAddDebt(true);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // BOSHQA XATO
-    if (error) {
-      console.error("Shop fetch error:", error);
-      setLoading(false);
-      return;
-    }
-
-    // SHOP BOR
-    const plan = (["free", "plus", "pro"].includes(data.plan)
-      ? data.plan
-      : "free") as ShopPlan;
-
-    const count = await getDebtCount(data.id);
-    const limit = PLAN_LIMITS[plan];
-
-    setDebtCount(count);
-    setCanAddDebt(limit === null || count < limit);
-
-    setShop({
-      ...data,
-      plan,
-    });
-
-    setLoading(false);
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchShop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [fetchShop]);
 
   return (
-    <ShopContext.Provider
-      value={{
-        shop,
-        loading,
-        debtCount,
-        canAddDebt,
-        refreshShop: fetchShop,
-      }}
-    >
+    <ShopContext.Provider value={{ shop, loading, error, refreshShop: fetchShop }}>
       {children}
     </ShopContext.Provider>
   );
@@ -107,8 +77,6 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
 export function useShop() {
   const ctx = useContext(ShopContext);
-  if (!ctx) {
-    throw new Error("useShop must be used inside ShopProvider");
-  }
+  if (!ctx) throw new Error("useShop must be used inside ShopProvider");
   return ctx;
 }

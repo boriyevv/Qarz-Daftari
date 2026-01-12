@@ -1,7 +1,8 @@
-import { supabase } from "./supabaseClient";
+import { createClient } from "./supabaseClient";
 import { Shop } from "@/types/shop";
 
 export async function getMyShop(userId: string) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from("shops")
     .select("*")
@@ -16,6 +17,7 @@ export async function getMyShop(userId: string) {
 }
 
 export async function createShop(name: string, userId: string) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from("shops")
     .insert({

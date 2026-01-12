@@ -1,5 +1,4 @@
-import { supabase } from "./supabaseClient";
-
+import { createClient } from "@/lib/supabaseClient";
 
 export type CreateDebtPayload = {
   shop_id: string;
@@ -24,8 +23,9 @@ export type UpdateDebtPayload = {
   note?: string;
 };
 
-
 export async function getDebtCount(shopId: string): Promise<number> {
+  const supabase = createClient();
+  
   const { count, error } = await supabase
     .from("debts")
     .select("*", { count: "exact", head: true })
@@ -36,13 +36,12 @@ export async function getDebtCount(shopId: string): Promise<number> {
   return count ?? 0;
 }
 
-
-import { mapDebtFromDB } from "@/lib/debtMapper";
-
 export async function getDebtsByShopAndFolder(
   shopId: string,
   folderId: string
 ) {
+  const supabase = createClient();
+  
   const { data, error } = await supabase
     .from("debts")
     .select(`
@@ -62,12 +61,12 @@ export async function getDebtsByShopAndFolder(
 
   if (error) throw error;
 
-  return (data ?? []).map(mapDebtFromDB);
+  return data ?? [];
 }
 
-
-
 export async function createDebt(payload: CreateDebtPayload) {
+  const supabase = createClient();
+  
   const { error } = await supabase.from("debts").insert({
     shop_id: payload.shop_id,
     folder_id: payload.folder_id,
@@ -83,8 +82,9 @@ export async function createDebt(payload: CreateDebtPayload) {
   if (error) throw error;
 }
 
-
 export async function updateDebt(payload: UpdateDebtPayload) {
+  const supabase = createClient();
+  
   const { error } = await supabase
     .from("debts")
     .update({
@@ -99,14 +99,12 @@ export async function updateDebt(payload: UpdateDebtPayload) {
   if (error) throw error;
 }
 
-/**
- * Qarzni boshqa folderga ko‘chirish
- * (drag & drop)
- */
 export async function moveDebtToFolder(
   debtId: string,
   folderId: string
 ) {
+  const supabase = createClient();
+  
   const { error } = await supabase
     .from("debts")
     .update({ folder_id: folderId })
@@ -116,6 +114,8 @@ export async function moveDebtToFolder(
 }
 
 export async function deleteDebt(debtId: string) {
+  const supabase = createClient();
+  
   const { error } = await supabase
     .from("debts")
     .delete()

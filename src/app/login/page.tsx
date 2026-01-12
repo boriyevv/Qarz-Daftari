@@ -53,13 +53,6 @@ export default function LoginPage() {
         <button className="w-full bg-black text-white py-2 rounded-xl">
           Login
         </button>
-
-        <p className="text-sm text-center text-black">
-          Don’t have an account?{" "}
-          <a href="/register" className="underline">
-            Sign up
-          </a>
-        </p>
       </form>
     </div>
   );

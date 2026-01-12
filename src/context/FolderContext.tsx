@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseClient";
 import { Folder } from "@/types/folder";
 import { useShop } from "@/context/ShopContext";
 
@@ -43,6 +43,8 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const supabase = createClient();
+
     supabase
       .from("folders")
       .select("*")
@@ -67,6 +69,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
   const addFolder = async (name: string) => {
     if (!shop) return;
 
+    const supabase = createClient();
     const order = folders.length;
 
     const { data, error } = await supabase
@@ -86,6 +89,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
   };
 
   const renameFolderById = async (id: string, name: string) => {
+    const supabase = createClient();
     await supabase.from("folders").update({ name }).eq("id", id);
     setFolders((f) => f.map((x) => (x.id === id ? { ...x, name } : x)));
   };
@@ -94,6 +98,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
     const folder = folders.find((f) => f.id === id);
     if (!folder || folder.isDefault) return;
 
+    const supabase = createClient();
     await supabase.from("folders").delete().eq("id", id);
     setFolders((f) => f.filter((x) => x.id !== id));
 
@@ -111,6 +116,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
       order: i,
     }));
 
+    const supabase = createClient();
     await supabase.from("folders").upsert(updates);
   };
 

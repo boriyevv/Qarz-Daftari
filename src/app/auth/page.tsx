@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AuthPage() {
-  const { user, login, register, loading } = useAuth();
+  const { user, login, loading } = useAuth();
   const router = useRouter();
 
-  const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,22 +21,16 @@ export default function AuthPage() {
   const submit = async () => {
     setError("");
     try {
-      if (mode === "login") {
-        await login(email, password);
-      } else {
-        await register(email, password);
-      }
+      await login(email, password);
     } catch (e: any) {
-      setError(e.message);
+      setError(e.message || "Login failed");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="w-full max-w-sm border p-6 rounded">
-        <h1 className="text-xl font-bold mb-4">
-          {mode === "login" ? "Login" : "Register"}
-        </h1>
+        <h1 className="text-xl font-bold mb-4">Login</h1>
 
         <input
           type="email"
@@ -63,19 +56,12 @@ export default function AuthPage() {
           onClick={submit}
           className="w-full bg-black text-white py-2"
         >
-          {mode === "login" ? "Login" : "Register"}
+          Login
         </button>
 
-        <button
-          className="mt-3 text-sm underline"
-          onClick={() =>
-            setMode(mode === "login" ? "register" : "login")
-          }
-        >
-          {mode === "login"
-            ? "Create account"
-            : "Already have an account?"}
-        </button>
+        <p className="text-xs text-gray-500 mt-4 text-center">
+          Accountingiz bo‘lmasa administratorga murojaat qiling
+        </p>
       </div>
     </div>
   );
